@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import mapboxgl from 'mapbox-gl';
 
 function App() {
   // React hooks to manage state in a functional component
@@ -9,6 +10,7 @@ function App() {
   const [location, setLocation] = useState("");
   const [cityName, setCityName] = useState("");
   const weatherKey = process.env.REACT_APP_WEATHER_API_KEY;
+  const mapboxKey = process.env.REACT_APP_MAPBOX_API_KEY;
 
   const url = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${weatherKey}&units=imperial`;
 
@@ -85,6 +87,23 @@ function App() {
     return limitedData;
   };
 
+  // mapbox data
+  useEffect(() => {
+    // Initialize Mapbox with your API key
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZ2FicmllbGxhbWFydGluZXowODE5IiwiYSI6ImNsZmp3MWZlMDA0dnY0MG15OXM1bzN4Zm0ifQ.cNnSyzNDt8986Ss3GNDRjQ';
+
+    // Create a new map instance
+    const map = new mapboxgl.Map({
+      container: 'map', // The ID of the HTML element where you want to render the map
+      style: 'mapbox://styles/mapbox/streets-v11', // Style URL
+      center: [-74.5, 40], // Initial center coordinates (longitude, latitude)
+      zoom: 9, // Initial zoom level
+    });
+
+    // Clean up the map instance when the component unmounts
+    return () => map.remove();
+  }, []);
+
   return (
     <div className="app">
       <div className="search">
@@ -156,6 +175,10 @@ function App() {
             </div>
           </div>
         ))}
+      </div>
+      <div className="mapbox">
+        {/* This is where you can render your map */}
+      <div id="map" style={{ width: '75%', height: '300px' }}></div>
       </div>
     </div>
   );

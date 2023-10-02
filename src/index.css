@@ -41,11 +41,14 @@ body {
 
 .desc-div {
   display: flex;
+  justify-content: flex-end;
 }
 
 .icon {
   display: flex;
   align-items: center;
+  position: relative;
+  bottom: 84px;
 }
 
 .app {
@@ -108,7 +111,7 @@ body {
 
 .container {
   max-width: 100%;
-  height: 650px;
+  height: 300px;
   margin: auto;
   padding: 0 1rem;
   top: 10%;
@@ -116,6 +119,10 @@ body {
   flex-wrap: wrap;
   justify-content: space-evenly;
   overflow-y: auto;
+}
+
+.top {
+  height: 190px;
 }
 
 .container .card {
@@ -132,5 +139,5 @@ body {
 .bottom {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
 }
