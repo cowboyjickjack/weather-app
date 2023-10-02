@@ -149,3 +149,11 @@ body {
   display: flex;
   padding: 15px 0px;
 }
+
+canvas.mapboxgl-canvas {
+  border-radius: 30px;
+}
+
+div.mapboxgl-ctrl-bottom-right {
+  display: none !important;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import mapboxgl from 'mapbox-gl';
+import mapboxgl, { Marker } from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css'; 
 
 function App() {
   // React hooks to manage state in a functional component
@@ -9,6 +10,8 @@ function App() {
   const [data, setData] = useState([]);
   const [location, setLocation] = useState("");
   const [cityName, setCityName] = useState("");
+  const [mapCenter, setMapCenter] = useState([-98.48535, 29.42362]); // Default center coordinates
+
   const weatherKey = process.env.REACT_APP_WEATHER_API_KEY;
   const mapboxKey = process.env.REACT_APP_MAPBOX_API_KEY;
 
@@ -34,6 +37,14 @@ function App() {
 
           // sets city name 
           setCityName(response.data.city.name);
+
+          const { coord } = response.data.city;
+          const newMapCenter = [coord.lon, coord.lat];
+
+          // Update mapCenter
+          setMapCenter(newMapCenter);
+
+
         })
         .catch((error) => {
           // error catch if API request is failed
@@ -88,24 +99,33 @@ function App() {
   };
 
   // mapbox data
-  useEffect(() => {
-    // Initialize Mapbox with your API key
-    mapboxgl.accessToken = mapboxKey;
+    useEffect(() => {
+      
+      mapboxgl.accessToken = mapboxKey;
 
-    // Create a new map instance
-    const map = new mapboxgl.Map({
-      container: 'map', // The ID of the HTML element where you want to render the map
-      style: 'mapbox://styles/mapbox/streets-v11', // Style URL
-      center: [-74.5, 40], // Initial center coordinates (longitude, latitude)
-      zoom: 9, // Initial zoom level
-    });
+      // Create a new map instance
+      const map = new mapboxgl.Map({
+        container: 'map', // ID where you want to render the map
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: mapCenter, // from search
+        zoom: 8, 
+      });
 
-    // Clean up the map instance when the component unmounts
-    return () => map.remove();
-  }, []);
+      // Update the map's center immediately when mapCenter changes
+      map.setCenter(mapCenter);
 
-  console.log(weatherKey);
-  console.log(mapboxKey);
+      // Create a marker and set its coordinates to match the initial mapCenter
+      const marker = new mapboxgl.Marker().setLngLat(mapCenter).addTo(map);
+
+      const updateMarker = (lngLat) => {
+        marker.setLngLat(lngLat).addTo(map);
+      };
+
+      updateMarker(mapCenter);
+
+      // Clean up the map instance when the component unmounts
+      return () => map.remove();
+    }, [mapCenter]); // Add mapCenter as a dependency to useEffect
 
   return (
     <div className="app">
@@ -181,7 +201,7 @@ function App() {
       </div>
       <div className="mapbox">
         {/* This is where you can render your map */}
-      <div id="map" style={{ width: '1000px', height: '500px' }}></div>
+      <div id="map" style={{ width: '1000px', height: '500px'}}></div>
       </div>
     </div>
   );
