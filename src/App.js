@@ -75,7 +75,7 @@ function App() {
     const limitedData = {};
     let count = 0;
     for (const key in groupedData) {
-      if (count >= 5) {
+      if (count >= 4) {
         break;
       }
       limitedData[key] = groupedData[key];
@@ -126,7 +126,7 @@ function App() {
               </div>
               <div className="description">
                 {data[dayKey].weather[0] && data[dayKey].weather[0].icon && (
-                  <div>
+                  <div className="desc-div">
                     <h4>{data[dayKey].weather[0].description}</h4>
                     <img
                       className="icon"
