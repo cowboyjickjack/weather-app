@@ -10,6 +10,7 @@ function App() {
   const [location, setLocation] = useState("");
   const [cityName, setCityName] = useState("");
   const weatherKey = process.env.REACT_APP_WEATHER_API_KEY;
+  const mapboxKey = process.env.REACT_APP_MAPBOX_API_KEY;
 
   const url = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${weatherKey}&units=imperial`;
 
@@ -89,7 +90,7 @@ function App() {
   // mapbox data
   useEffect(() => {
     // Initialize Mapbox with your API key
-    mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_API_KEY;
+    
 
     // Create a new map instance
     const map = new mapboxgl.Map({
@@ -102,6 +103,9 @@ function App() {
     // Clean up the map instance when the component unmounts
     return () => map.remove();
   }, []);
+
+  console.log(weatherKey);
+  console.log(process.env.REACT_APP_MAPBOX_API_KEY);
 
   return (
     <div className="app">
