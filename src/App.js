@@ -10,7 +10,6 @@ function App() {
   const [location, setLocation] = useState("");
   const [cityName, setCityName] = useState("");
   const weatherKey = process.env.REACT_APP_WEATHER_API_KEY;
-  const mapboxKey = process.env.REACT_APP_MAPBOX_API_KEY;
 
   const url = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${weatherKey}&units=imperial`;
 
@@ -90,7 +89,7 @@ function App() {
   // mapbox data
   useEffect(() => {
     // Initialize Mapbox with your API key
-    mapboxgl.accessToken = 'pk.eyJ1IjoiZ2FicmllbGxhbWFydGluZXowODE5IiwiYSI6ImNsZmp3MWZlMDA0dnY0MG15OXM1bzN4Zm0ifQ.cNnSyzNDt8986Ss3GNDRjQ';
+    mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_API_KEY;
 
     // Create a new map instance
     const map = new mapboxgl.Map({
@@ -178,7 +177,7 @@ function App() {
       </div>
       <div className="mapbox">
         {/* This is where you can render your map */}
-      <div id="map" style={{ width: '75%', height: '300px' }}></div>
+      <div id="map" style={{ width: '1000px', height: '500px' }}></div>
       </div>
     </div>
   );
