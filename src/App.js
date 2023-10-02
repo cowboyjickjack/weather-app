@@ -90,7 +90,7 @@ function App() {
   // mapbox data
   useEffect(() => {
     // Initialize Mapbox with your API key
-    
+    mapboxgl.accessToken = mapboxKey;
 
     // Create a new map instance
     const map = new mapboxgl.Map({
@@ -105,7 +105,7 @@ function App() {
   }, []);
 
   console.log(weatherKey);
-  console.log(process.env.REACT_APP_MAPBOX_API_KEY);
+  console.log(mapboxKey);
 
   return (
     <div className="app">
