@@ -4,19 +4,62 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css'; 
 
 function App() {
+
   // React hooks to manage state in a functional component
-  const [data, setData] = useState([]);
+  // data that can change over time and trigger re-renders of your component
+  // These state variables allow you to store and update data that needs to be reactive in your component
+  const [data, setData] = useState([]); // array since it's pulling data
   const [location, setLocation] = useState("");
   const [cityName, setCityName] = useState("");
   const [mapCenter, setMapCenter] = useState([-98.48535, 29.42362]); // Default center coordinates
-  const [markerLocation, setMarkerLocation] = useState(mapCenter);
+  const [markerLocation, setMarkerLocation] = useState(mapCenter); // initially set to mapCenter
 
   const weatherKey = process.env.REACT_APP_WEATHER_API_KEY;
   const mapboxKey = process.env.REACT_APP_MAPBOX_API_KEY;
 
-  // Function to fetch weather data for a given location
+  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${weatherKey}&units=imperial`;
+
+  // Function to search for a location when Enter is pressed or the button is clicked
+  const searchLocation = (event) => { // event = user's action on the page
+    if (event.key === "Enter" || event.type === "click") {
+      if (!location || !isNaN(location)) {
+        alert("Please enter a city name.");
+        return;
+      }
+
+      axios
+        .get(url)
+        .then((response) => {
+          const groupedData = groupDataByDay(response.data.list);
+          setData(groupedData);
+          console.log(groupedData);
+
+          setCityName(response.data.city.name);
+
+          // This line uses destructuring assignment to extract the coord object from the API response
+          const { coord } = response.data.city;
+          const newMapCenter = [coord.lon, coord.lat];
+
+          // Update mapCenter from above declared const
+          setMapCenter(newMapCenter);
+        })
+        .catch((error) => {
+          console.error(error);
+          if (error.response && error.response.status === 404) {
+            console.error(
+              "City not found or API request failed. Please try again."
+            );
+          }
+        });
+
+      setLocation("");
+    }
+  };
+
+  // Function to fetch weather data for a given location via lat/lng and map marker
   const fetchWeatherData = (location) => {
-    const [lng, lat] = location;
+    // variable for arrow function
+    const [lng, lat] = location; 
     const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${weatherKey}&units=imperial`;
 
     axios
@@ -37,44 +80,6 @@ function App() {
           );
         }
       });
-  };
-
-  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&appid=${weatherKey}&units=imperial`;
-
-  // Function to search for a location when Enter is pressed or the button is clicked
-  const searchLocation = (event) => {
-    if (event.key === "Enter" || event.type === "click") {
-      if (!location || !isNaN(location)) {
-        alert("Please enter a city name.");
-        return;
-      }
-
-      axios
-        .get(url)
-        .then((response) => {
-          const groupedData = groupDataByDay(response.data.list);
-          setData(groupedData);
-          console.log(groupedData);
-
-          setCityName(response.data.city.name);
-
-          const { coord } = response.data.city;
-          const newMapCenter = [coord.lon, coord.lat];
-
-          // Update mapCenter
-          setMapCenter(newMapCenter);
-        })
-        .catch((error) => {
-          console.error(error);
-          if (error.response && error.response.status === 404) {
-            console.error(
-              "City not found or API request failed. Please try again."
-            );
-          }
-        });
-
-      setLocation("");
-    }
   };
 
   // Function to handle Enter key press
